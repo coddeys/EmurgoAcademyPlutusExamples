@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE DataKinds           #-}  --Enable datatype promotions
 {-# LANGUAGE NoImplicitPrelude   #-}  --Don't load native prelude to avoid conflict with PlutusTx.Prelude
 {-# LANGUAGE TemplateHaskell     #-}  --Enable Template Haskell splice and quotation syntax
@@ -7,7 +8,7 @@ module AlwaysSucceedandFail where
 --PlutusTx 
 import                  PlutusTx                       (BuiltinData, compile)
 import                  PlutusTx.Builtins              as Builtins (mkI)
-import                  PlutusTx.Prelude               (error, otherwise, (==), Bool (..), Integer)
+import                  PlutusTx.Prelude               (traceError, error, otherwise, (==), Bool (..), Integer)
 import                  Plutus.V2.Ledger.Api        as PlutusV2
 --Serialization
 import                  Serialization    (writeValidatorToFile, writeDataToFile)
@@ -21,7 +22,7 @@ alwaysSucceeds _ _ _ = ()
 
 {-# INLINABLE alwaysFails #-}
 alwaysFails :: BuiltinData -> BuiltinData -> BuiltinData -> ()   
-alwaysFails _ _ _ = error () 
+alwaysFails _ _ _ = traceError "Hey CDP!"
 
 {-# INLINABLE redeemer11 #-}
 redeemer11 :: BuiltinData -> BuiltinData -> BuiltinData -> ()
