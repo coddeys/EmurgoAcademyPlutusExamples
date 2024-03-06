@@ -1,4 +1,4 @@
-utxoin="132e58a7dbe205032676ea69a10f918245a3a56820044d9472f342f01a8a0ce3#0"
+utxoin="114d55c1dc87427f86e3550d5fa98b13affb1f068949a76400da8ed8866b81e5#4"
 address="$(cat typedDatumEqRedeemerValidator.addr)"
 output="15000000"
 PREVIEW="--testnet-magic 2"
@@ -8,7 +8,7 @@ cardano-cli transaction build \
   $PREVIEW \
   --tx-in $utxoin \
   --tx-out $address+$output \
-  --tx-out-datum-hash-file unit.json \
+  --tx-out-datum-hash-file owduUnit.json \
   --tx-out $address+$output \
   --tx-out-datum-hash-file owdi33.json \
   --tx-out $address+$output \

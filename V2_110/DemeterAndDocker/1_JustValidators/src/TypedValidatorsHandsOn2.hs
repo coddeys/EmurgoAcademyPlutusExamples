@@ -18,8 +18,8 @@ import                  Prelude                     (IO)
 -- Custom Types
 ------------------------------------------------------------------------------------------
 
-data OurWonderfullDatum = OWDI Integer | OWDB Bool
-makeIsDataIndexed ''OurWonderfullDatum [('OWDI,0),('OWDB,1)]
+data OurWonderfullDatum = OWDI Integer | OWDB Bool | OWDU ()
+makeIsDataIndexed ''OurWonderfullDatum [('OWDI,0),('OWDB,1), ('OWDU,2)]
 
 data OurWonderfullRedeemer = OWRI Integer | OWRB Bool | JOKER
 makeIsDataIndexed ''OurWonderfullRedeemer [('OWRI,0),('OWRB,1),('JOKER,2)]
@@ -27,9 +27,9 @@ makeIsDataIndexed ''OurWonderfullRedeemer [('OWRI,0),('OWRB,1),('JOKER,2)]
 {-# INLINABLE customDatumEqRedeemer #-}
 customDatumEqRedeemer :: OurWonderfullDatum -> OurWonderfullRedeemer -> ScriptContext -> Bool
 customDatumEqRedeemer  _         JOKER    _ = True 
-customDatumEqRedeemer  _        (OWRB rb) _ = traceIfFalse "Boolean is FALSE!" rb
 customDatumEqRedeemer (OWDI dn) (OWRI rn) _ = traceIfFalse "Number are not eq!" (dn ==  rn)
-customDatumEqRedeemer  _         _        _ = traceError   "Not the right redeemer!" False
+customDatumEqRedeemer (OWDB db) (OWRB rb) _ = traceIfFalse "Boolean are not eq!" (db ==  rb)
+customDatumEqRedeemer  _         _        _ = traceError "Not the right redeemer!" False
 
 ------------------------------------------------------------------------------------------
 -- Mappers and Compiling expresions
@@ -50,7 +50,7 @@ saveCustomDatumEqRedeemerValidator :: IO ()
 saveCustomDatumEqRedeemerValidator =  writeValidatorToFile "./testnet/typedDatumEqRedeemerValidator.plutus" customDatumEqRedeemerValidator
 
 saveUnit :: IO ()
-saveUnit = writeDataToFile "./testnet/unit.json" ()
+saveUnit = writeDataToFile "./testnet/owduUnit.json" (OWDU ())
 
 saveOWDIValue33 :: IO ()
 saveOWDIValue33 = writeDataToFile "./testnet/owdi33.json" (OWDI 33)
