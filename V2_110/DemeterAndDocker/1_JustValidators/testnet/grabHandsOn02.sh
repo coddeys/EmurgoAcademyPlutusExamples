@@ -18,7 +18,7 @@ cardano-cli transaction build \
   --tx-in $utxoinUnit \
   --tx-in-script-file typedDatumEqRedeemerValidator.plutus \
   --tx-in-datum-file unit.json \
-  --tx-in-redeemer-file joker.json \
+  --tx-in-redeemer-file unit.json \
   --required-signer-hash $signerPKH \
   --tx-in-collateral $collateral \
   --tx-out $address+$output \

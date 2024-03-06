@@ -26,10 +26,10 @@ makeIsDataIndexed ''OurWonderfullRedeemer [('OWRI,0),('OWRB,1),('JOKER,2)]
 
 {-# INLINABLE customDatumEqRedeemer #-}
 customDatumEqRedeemer :: OurWonderfullDatum -> OurWonderfullRedeemer -> ScriptContext -> Bool
-customDatumEqRedeemer (OWDI dn) (OWRI rn) _ = traceIfFalse "Number are not eq!" (dn ==  rn)
-customDatumEqRedeemer (OWDB db) (OWRB rb) _ = traceIfFalse "Boolean are not eq!" (db ==  rb)
 customDatumEqRedeemer  _         JOKER    _ = True 
-customDatumEqRedeemer  _         _        _ = traceError "Not the right redeemer!" False
+customDatumEqRedeemer  _        (OWRB rb) _ = traceIfFalse "Boolean is FALSE!" rb
+customDatumEqRedeemer (OWDI dn) (OWRI rn) _ = traceIfFalse "Number are not eq!" (dn ==  rn)
+customDatumEqRedeemer  _         _        _ = traceError   "Not the right redeemer!" False
 
 ------------------------------------------------------------------------------------------
 -- Mappers and Compiling expresions

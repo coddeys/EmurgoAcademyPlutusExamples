@@ -1,8 +1,7 @@
-utxoin="6258c575862b8c7b77fe68730d9651632f3426720218ae1ede743f615c82f8fd#3"
+utxoin="132e58a7dbe205032676ea69a10f918245a3a56820044d9472f342f01a8a0ce3#0"
 address="$(cat typedDatumEqRedeemerValidator.addr)"
 output="15000000"
 PREVIEW="--testnet-magic 2"
-nami=$Adr01
 
 cardano-cli transaction build \
   --babbage-era \
@@ -16,7 +15,7 @@ cardano-cli transaction build \
   --tx-out-datum-hash-file owdbTrue.json \
   --tx-out $address+$output \
   --tx-out-datum-hash-file owdbFalse.json \
-  --change-address $nami \
+  --change-address $Adr01 \
   --out-file give.unsigned
 
 cardano-cli transaction sign \
