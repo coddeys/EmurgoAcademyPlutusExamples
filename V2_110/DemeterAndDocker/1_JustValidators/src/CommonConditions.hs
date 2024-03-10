@@ -33,7 +33,7 @@ conditionator :: ConditionsDatum -> ActionsRedeemer -> ScriptContext -> Bool
 conditionator datum redeemer sContext = case redeemer of
                                          Owner   -> traceIfFalse    "Not signed properly!"  signedByOwner
                                          Time    -> traceIfFalse    "Your run out of time!" timeLimitNotReached                                         
-                                         Price   -> traceIfFalse    "Price is not covered"  priceIsCovered
+                                         Price   -> traceIfFalse    "Price is not reached!!!"  priceIsReached
     where
         signedByOwner :: Bool
         signedByOwner = txSignedBy info $ owner datum
@@ -41,8 +41,8 @@ conditionator datum redeemer sContext = case redeemer of
         timeLimitNotReached :: Bool
         timeLimitNotReached = contains (to $ timelimit datum) $ txInfoValidRange info 
 
-        priceIsCovered :: Bool
-        priceIsCovered =  assetClassValueOf (valueSpent info)  (AssetClass (adaSymbol,adaToken)) > price datum
+        priceIsReached :: Bool
+        priceIsReached =  assetClassValueOf (valueSpent info)  (AssetClass (adaSymbol,adaToken)) > price datum
 
         info :: TxInfo
         info = scriptContextTxInfo sContext
@@ -66,7 +66,7 @@ saveUnit :: IO ()
 saveUnit = writeDataToFile "./testnet/unit.json" ()
 
 saveDatum :: IO ()
-saveDatum  = writeDataToFile "./testnet/datum.json" (Conditions "" 1686837045000 50)
+saveDatum  = writeDataToFile "./testnet/datum.json" (Conditions "8b225ceddb05738d7a53bd130136e187a6f0baa4d219161fed4f2ac0" 1686837045000 50)
 
 saveRedeemerOwner :: IO ()
 saveRedeemerOwner = writeDataToFile "./testnet/redeemOwner.json" Owner
