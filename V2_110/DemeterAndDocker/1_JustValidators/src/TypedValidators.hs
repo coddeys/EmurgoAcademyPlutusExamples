@@ -2,12 +2,13 @@
 {-# LANGUAGE NoImplicitPrelude   #-}  --Don't load native prelude to avoid conflict with PlutusTx.Prelude
 {-# LANGUAGE TemplateHaskell     #-}  --Enable Template Haskell splice and quotation syntax
 {-# LANGUAGE OverloadedStrings   #-}  --Enable passing strings as other character formats, like bytestring.
+{-# LANGUAGE DeriveAnyClass    #-}
 
 module TypedValidators where
 
 --PlutusTx 
-import                  PlutusTx                       (BuiltinData, compile,unstableMakeIsData, makeIsDataIndexed)
-import                  PlutusTx.Prelude               (traceIfFalse, otherwise, (==), Bool (..), Integer, ($))
+import                  PlutusTx                       (compile,unstableMakeIsData, makeIsDataIndexed)
+import                  PlutusTx.Prelude               (traceIfFalse, (==), Bool (..), Integer, (&&))
 import                  Plutus.V2.Ledger.Api        as PlutusV2
 --Serialization
 import                  Mappers                        (wrapValidator)
@@ -45,6 +46,42 @@ customTypedRedeemer11 ::  () -> OurWonderfullRedeemer -> ScriptContext -> Bool
 customTypedRedeemer11 _ (OWR number) _    =  traceIfFalse "Not the right redeemer!" (number ==  11)
 customTypedRedeemer11 _ (JOKER boolean) _ =  traceIfFalse "The Joker sais no!" boolean
 
+
+newtype SwapDatum = Price Integer
+unstableMakeIsData ''SwapDatum
+
+data Action = Cancel | Sell
+unstableMakeIsData ''Action
+
+swapDatum :: SwapDatum -> Action -> ScriptContext -> Bool
+swapDatum (Price _ ) action ctx =
+  case action of
+    Sell -> traceIfFalse "Sell conditions not fullfilled!"  sellConditions
+    Cancel -> traceIfFalse "Cancelation conditions not fullfilled" cancelConditions
+    where
+      sellConditions :: Bool
+      sellConditions = valueGreaterThanPrice && sellerGetsValue && buyerGetsNFT && swapSCgetsDaCut
+
+      cancelConditions :: Bool
+      cancelConditions = True
+
+      valueGreaterThanPrice = True
+
+      sellerGetsValue = True
+
+      buyerGetsNFT = True
+
+      swapSCgetsDaCut = True
+  
+      txInfo :: TxInfo
+      txInfo = scriptContextTxInfo ctx
+
+      inputs :: [TxInInfo]
+      inputs = txInfoInputs txInfo
+
+      valueProvided :: [TxInfo] -> Value
+      valueProvided = foldMap (txOutValue . txInInfoResolved) 
+
 ------------------------------------------------------------------------------------------
 -- Mappers and Compiling expresions
 ------------------------------------------------------------------------------------------
@@ -64,6 +101,7 @@ typedRedeemer11Val :: Validator
 typedRedeemer11Val = PlutusV2.mkValidatorScript $$(PlutusTx.compile [|| mappedTypedRedeemer11 ||])
 
 
+
 -- for custom types
 
 mappedCustomTypedDatum22 :: BuiltinData -> BuiltinData -> BuiltinData -> ()
@@ -77,6 +115,15 @@ customTypedDatum22Val = PlutusV2.mkValidatorScript $$(PlutusTx.compile [|| mappe
 
 customTypedRedeemer11Val :: Validator
 customTypedRedeemer11Val = PlutusV2.mkValidatorScript $$(PlutusTx.compile [|| mappedCustomTypedRedeemer11 ||])
+
+
+mappedSwapDatum :: BuiltinData -> BuiltinData -> BuiltinData -> ()
+mappedSwapDatum = wrapValidator typedRedeemer11
+
+swapDatumVal :: Validator
+swapDatumVal = PlutusV2.mkValidatorScript $$(PlutusTx.compile [|| mappedSwapDatum ||])
+
+
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
@@ -95,6 +142,9 @@ saveCustomTypedDatum22 =  writeValidatorToFile "./testnet/customTypedDatum22.plu
 saveCustomTypedRedeemer11 :: IO ()
 saveCustomTypedRedeemer11 =  writeValidatorToFile "./testnet/customTypedRedeemer11.plutus" customTypedRedeemer11Val
 
+saveSwapDatumVal :: IO ()
+saveSwapDatumVal =  writeValidatorToFile "./testnet/swapDatumVal.plutus" typedDatum22Val
+
 saveUnit :: IO ()
 saveUnit = writeDataToFile "./testnet/unit.json" ()
 
@@ -110,6 +160,9 @@ saveGoodDatum = writeDataToFile "./testnet/goodOWD.json" (OWD 22)
 saveBadDatum  :: IO ()
 saveBadDatum = writeDataToFile "./testnet/badOWD.json" (OWD 23)
 
+savePrice50 :: IO ()
+savePrice50 = writeDataToFile "./testnet/price50.json" (Price 50)
+
 saveOWR  :: IO ()
 saveOWR = writeDataToFile "./testnet/OWR.json" ()
 
@@ -119,12 +172,19 @@ saveGoodJOKER = writeDataToFile "./testnet/GoodJoker.json" (JOKER True)
 saveBadJOKER :: IO ()
 saveBadJOKER = writeDataToFile "./testnet/BadJoker.json" (JOKER False)
 
+saveSell :: IO ()
+saveSell = writeDataToFile "./testnet/sell.json" (Sell)
+
+saveCancel :: IO ()
+saveCancel = writeDataToFile "./testnet/cancel.json" (Cancel)
+
 saveAll :: IO ()
 saveAll = do
             saveTypedDatum22
             saveTypedRedeemer11
             saveCustomTypedDatum22
             saveCustomTypedRedeemer11
+            saveSwapDatumVal
             saveUnit
             saveValue11
             saveValue22
@@ -133,4 +193,12 @@ saveAll = do
             saveOWR
             saveGoodJOKER
             saveBadJOKER
+            
+
+saveSwap :: IO ()
+saveSwap = do
+            saveSwapDatumVal
+            savePrice50
+            saveCancel
+            saveSell
             
