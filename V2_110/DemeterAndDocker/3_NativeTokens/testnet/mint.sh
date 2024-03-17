@@ -1,12 +1,11 @@
-utxoin1="3b3c87bc71d72d169af15bf7dd5f1793bc9a40ab6eadcf2d3b3cc66e8ae4de6a#0"
-utxoin2="cbe4eb5f4b9ac4be54bb75b2415fd1b0d29f4757e8dd0d86d5260d92c0264118#0"
-policyid=$(cat ieaNFT.pid)
-nami="addr_test1qpc6mrwu9cucrq4w6y69qchflvypq76a47ylvjvm2wph4szeq579yu2z8s4m4tn0a9g4gfce50p25afc24knsf6pj96sz35wnt"
-output="110000000"
-tokenamount="1"
-tokenname=$(echo -n "cantburnEAnft" | xxd -ps | tr -d '\n')
-collateral="2b55046a8742d6e149e0c19cd920c691574133341bb695a952a946c45a000d0b#2"
-signerPKH="697a501b7d05766b3d08e39dab43e0f170973d3398b28745b3b8ce55"
+utxoin1="bcc6727c18b959cff0e65760e69bc5b220814f941c14ff7e056f1d85cd9b015b#4"
+utxoin2=""
+policyid=$(cat EAcoins.pid)
+output="5500000"
+tokenamount="100"
+tokenname=$(echo -n "EAcoinsbat107" | xxd -ps | tr -d '\n')
+collateral="c7e5859f6c3920e54bc81e6638980a749c5c897fb428cfe5611c99a57542cd7b#1"
+signerPKH="8b225ceddb05738d7a53bd130136e187a6f0baa4d219161fed4f2ac0"
 notneeded="--invalid-hereafter 10962786"
 PREVIEW="--testnet-magic 2"
 
@@ -16,25 +15,19 @@ cardano-cli transaction build \
   --tx-in $utxoin1 \
   --required-signer-hash $signerPKH \
   --tx-in-collateral $collateral \
-  --tx-out $Adr01+"50000000" \
-  --tx-out $Adr01+"60000000" \
-  --tx-out $Adr01+$output \
-  --tx-out $Adr01+"220000000" \
   --tx-out $nami+$output+"$tokenamount $policyid.$tokenname" \
   --change-address $Adr01 \
   --mint "$tokenamount $policyid.$tokenname" \
-  --mint-script-file ieaNFT.plutus \
-  --mint-redeemer-file unit.json \
-  --protocol-params-file protocol.params \
+  --mint-script-file EAcoins.plutus \
+  --mint-redeemer-file OurRedeemer.json \
   --out-file mintTx.body
 
 cardano-cli transaction sign \
     --tx-body-file mintTx.body \
-    --signing-key-file ../../../../../Wallets/Adr07.skey \
-    --signing-key-file ../../../../../Wallets/Adr01.skey \
+    --signing-key-file ../../../wallets/person1.skey \
     $PREVIEW \
     --out-file mintTx.signed
 
- cardano-cli transaction submit \
+cardano-cli transaction submit \
     $PREVIEW \
     --tx-file mintTx.signed

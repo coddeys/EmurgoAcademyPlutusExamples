@@ -20,6 +20,7 @@ import           Prelude                (IO)
 -- ON-CHAIN CODE
 
 data Action = Owner | Time | Price
+
 unstableMakeIsData ''Action
 
 data OurRedeemer = OR { action :: Action
@@ -74,6 +75,9 @@ saveRedeemerTime = writeDataToFile "./testnet/redeemTime.json" Time
 saveRedeemerPrice :: IO ()
 saveRedeemerPrice = writeDataToFile "./testnet/redeemPrice.json" Price
 
+saveDatum  = writeDataToFile "./testnet/OurRedeemer.json" (OR Owner "8b225ceddb05738d7a53bd130136e187a6f0baa4d219161fed4f2ac0" 1686837045000 50)
+
+
 saveAll :: IO ()
 saveAll = do
             saveEAcoinsPolicy
@@ -81,3 +85,4 @@ saveAll = do
             saveRedeemerOwner
             saveRedeemerPrice
             saveRedeemerTime
+            saveDatum
