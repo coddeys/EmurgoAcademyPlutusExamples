@@ -1,41 +1,30 @@
-utxoin1="3b3c87bc71d72d169af15bf7dd5f1793bc9a40ab6eadcf2d3b3cc66e8ae4de6a#0"
-utxoin2="cbe4eb5f4b9ac4be54bb75b2415fd1b0d29f4757e8dd0d86d5260d92c0264118#0"
+utxoin1="0e78111f4320736d5db8018e434f3804b153a5cc056524d01b1ef8cb20a5c30d#0"
+utxoin2="2c33a52f8e0c15f3e8f080b38a6dfb378d8e78df6997e5b87bba706c89864833#0"
 policyid=$(cat eaNFT.pid)
-nami="addr_test1qpc6mrwu9cucrq4w6y69qchflvypq76a47ylvjvm2wph4szeq579yu2z8s4m4tn0a9g4gfce50p25afc24knsf6pj96sz35wnt"
-output="110000000"
+output="10000000"
 tokenamount="1"
 tokenname=$(echo -n "EAnft" | xxd -ps | tr -d '\n')
-collateral="2b55046a8742d6e149e0c19cd920c691574133341bb695a952a946c45a000d0b#2"
-signerPKH="697a501b7d05766b3d08e39dab43e0f170973d3398b28745b3b8ce55"
+collateral="b43a45250de8237ce169c3a7ca21b32e4d30709f47080b42c7751a5a66e53dcb#1"
+signerPKH="8b225ceddb05738d7a53bd130136e187a6f0baa4d219161fed4f2ac0"
 notneeded="--invalid-hereafter 10962786"
 PREVIEW="--testnet-magic 2"
 
 cardano-cli transaction build \
   --babbage-era \
   $PREVIEW \
-  --tx-in $utxoin2 \
+  --tx-in $utxoin1 \
   --required-signer-hash $signerPKH \
   --tx-in-collateral $collateral \
-  --tx-out $Adr01+"50000000" \
-  --tx-out $Adr01+"60000000" \
-  --tx-out $Adr01+$output \
-  --tx-out $Adr01+"220000000" \
-  --tx-out $Adr01+"50000000" \
-  --tx-out $Adr01+"60000000" \
-  --tx-out $Adr01+$output \
-  --tx-out $Adr01+"220000000" \
   --tx-out $nami+$output+"$tokenamount $policyid.$tokenname" \
   --change-address $Adr01 \
   --mint "$tokenamount $policyid.$tokenname" \
   --mint-script-file eaNFT.plutus \
   --mint-redeemer-file Forge.json \
-  --protocol-params-file protocol.params \
   --out-file mintEAnftTx.body
 
 cardano-cli transaction sign \
     --tx-body-file mintEAnftTx.body \
-    --signing-key-file ../../../../../Wallets/Adr07.skey \
-    --signing-key-file ../../../../../Wallets/Adr01.skey \
+    --signing-key-file ../../../wallets/person1.skey \
     $PREVIEW \
     --out-file mintEAnftTx.signed
 

@@ -109,10 +109,10 @@ eaNFTPolicy utxoRef = mkMintingPolicyScript $
 {- Serialised Scripts and Values -}
 
 param :: TxOutRef
-param  = PlutusV2.TxOutRef { txOutRefId = "3b3c87bc71d72d169af15bf7dd5f1793bc9a40ab6eadcf2d3b3cc66e8ae4de6a"
+param  = PlutusV2.TxOutRef { txOutRefId = "0e78111f4320736d5db8018e434f3804b153a5cc056524d01b1ef8cb20a5c30d"
                            , txOutRefIdx = 0}
 param2 :: TxOutRef
-param2  = PlutusV2.TxOutRef { txOutRefId = "cbe4eb5f4b9ac4be54bb75b2415fd1b0d29f4757e8dd0d86d5260d92c0264118"
+param2  = PlutusV2.TxOutRef { txOutRefId = "2c33a52f8e0c15f3e8f080b38a6dfb378d8e78df6997e5b87bba706c89864833"
                            , txOutRefIdx = 0}
 -- You have to provide your own UTxO TxID and Index on serialization of the minting policy validator.                       
 
@@ -120,7 +120,10 @@ saveieaNFTPolicy :: IO ()
 saveieaNFTPolicy =  writePolicyToFile "./testnet/ieaNFT.plutus" $ ieaNFTPolicy param   
 
 saveeaNFTPolicy :: IO ()
-saveeaNFTPolicy =  writePolicyToFile "./testnet/eaNFT.plutus" $ eaNFTPolicy param2   
+saveeaNFTPolicy =  writePolicyToFile "./testnet/eaNFT.plutus" $ eaNFTPolicy param   
+
+saveeaNFTPolicy2 :: IO ()
+saveeaNFTPolicy2 =  writePolicyToFile "./testnet/eaNFT2.plutus" $ eaNFTPolicy param2   
 
 saveUnit :: IO ()
 saveUnit = writeDataToFile "./testnet/unit.json" ()
@@ -134,6 +137,7 @@ saveRedeemerBurning = writeDataToFile "./testnet/Burn.json" False
 saveAll :: IO ()
 saveAll = do
             saveieaNFTPolicy
+            saveeaNFTPolicy2
             saveeaNFTPolicy
             saveUnit
             saveRedeemerForging
