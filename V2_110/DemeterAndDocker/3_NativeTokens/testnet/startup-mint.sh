@@ -1,10 +1,12 @@
-utxoin1="7de0ecb8f839f7ce87f4f782ece35b13714f36ddd02aabaabbc43d7fa23a5a95#1"
-policyid=$(cat EAcoins.pid)
-output="5700000"
+utxoin1="a006070648e9d682ecbfe52cb94179f941d0aa88dbfaa17d9ac1ccfbdab7d23a#1"
+policyid=$(cat StartupCoins.pid)
+output="5900000"
 tokenamount="250"
 tokenname=$(echo -n "StartupCoins" | xxd -ps | tr -d '\n')
 collateral="b43a45250de8237ce169c3a7ca21b32e4d30709f47080b42c7751a5a66e53dcb#1"
-signerPKH="8b225ceddb05738d7a53bd130136e187a6f0baa4d219161fed4f2ac0"
+signerPKH1="8b225ceddb05738d7a53bd130136e187a6f0baa4d219161fed4f2ac0"
+signerPKH2="6efff2244d9f67a1a383db4a198a10c647408767cdcb0a44845ce15a"
+nami2="addr_test1qpc6mrwu9cucrq4w6y69qchflvypq76a47ylvjvm2wph4szeq579yu2z8s4m4tn0a9g4gfce50p25afc24knsf6pj96sz35wnt"
 notneeded="--invalid-hereafter 10962786"
 PREVIEW="--testnet-magic 2"
 
@@ -12,13 +14,14 @@ cardano-cli transaction build \
   --babbage-era \
   $PREVIEW \
   --tx-in $utxoin1 \
-  --required-signer-hash $signerPKH \
+  --required-signer-hash $signerPKH1 \
+  --required-signer-hash $signerPKH2 \
   --tx-in-collateral $collateral \
-  --tx-out $nami+$output+"$tokenamount $policyid.$tokenname" \
+  --tx-out $nami2+$output+"$tokenamount $policyid.$tokenname" \
   --change-address $Adr01 \
   --mint "$tokenamount $policyid.$tokenname" \
-  --mint-script-file EAcoins.plutus \
-  --mint-redeemer-file OurRedeemer.json \
+  --mint-script-file StartupCoins.plutus \
+  --mint-redeemer-file BothRedeemer.json \
   --out-file mintTx.body
 
 cardano-cli transaction sign \
