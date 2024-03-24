@@ -55,12 +55,16 @@ saveDatum :: IO ()
 saveDatum = writeDataToFile "./testnet/bountyConditions.json" BC { theX = 5
                                                                  , deadline = 1688738400000
                                                                  }
-
+saveDatumDima :: IO ()
+saveDatumDima = writeDataToFile "./testnet/DimaConditions.json" BC { theX = 43
+                                                                   , deadline = 1711321242000
+                                                                 }
 saveTheY :: IO ()
-saveTheY = writeDataToFile "./testnet/value-5.json" (-5::Integer) 
+saveTheY = writeDataToFile "./testnet/value-18.json" (-18::Integer)
 
 saveAll :: IO ()
 saveAll = do
            saveMathBountyValidator
            saveDatum
+           saveDatumDima
            saveTheY
